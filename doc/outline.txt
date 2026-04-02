@@ -1,0 +1,10 @@
+有限元计算程序
+--------------
+
+C++ 核心层：
+实现所有与数值计算相关的类，如网格、单元、材料、组装器、求解器等。
+这部分追求极致性能，使用 Eigen 处理矩阵运算，支持稀疏求解器（如 Eigen 的 SparseLU 或集成 PETSc）。
+
+Python 接口层：
+通过 pybind11 将 C++ 核心类暴露给 Python。
+Python 端负责读取输入文件（JSON、YAML）、构建模型实例、调用求解器、后处理（使用 NumPy、Matplotlib、PyVista 等）

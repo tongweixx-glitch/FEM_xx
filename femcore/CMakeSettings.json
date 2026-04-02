@@ -1,0 +1,23 @@
+﻿{
+  "configurations": [
+    {
+      "name": "x64-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": "",
+      "variables": [
+        {
+          "name": "pybind11_DIR",
+          "value": "C:\\Users\\35149\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\pybind11\\share\\cmake\\pybind11",
+          "type": "PATH"
+        }
+      ]
+    }
+  ]
+}
+
