@@ -1,0 +1,25 @@
+有限元计算程序
+--------------
+
+C++ 核心层：
+实现所有与数值计算相关的类，如网格、单元、材料、组装器、求解器等。
+这部分追求极致性能，使用 Eigen 处理矩阵运算，支持稀疏求解器（如 Eigen 的 SparseLU 或集成 PETSc）。
+
+Python 接口层：
+通过 pybind11 将 C++ 核心类暴露给 Python。
+Python 端负责读取输入文件（JSON、YAML）、构建模型实例、调用求解器、后处理（使用 NumPy、Matplotlib、PyVista 等）
+
+
+
+
+include tree
+------------
+
+include/
+├── Common.h            // 全局定义、Eigen 引用、Real 类型定义
+├── Node.h              // 节点类（坐标、自由度索引）
+├── Element.h           // 单元基类（虚函数：computeStiffnessMatrix）
+├── TriangleElement.h   // 具体实现：2D 三节点三角形单元
+├── Material.h          // 材料类（杨氏模量、泊松比、D 矩阵计算）
+├── Mesh.h              // 网格容器（存储所有 Node 和 Element）
+└── GmshInterface.h     // 核心桥梁：将 Python/Gmsh 数组导入 Mesh

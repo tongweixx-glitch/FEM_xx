@@ -1,0 +1,79 @@
+pybind
+------
+
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/eigen.h>
+
+#include "node.h"
+#include "element.h"
+#include "tri3element.h"
+#include "material.h"
+#include "mesh.h"
+
+namespace py = pybind11;
+
+PYBIND11_MODULE(femcore, m) {
+    m.doc() = "FEM core module - Mesh and Element management";
+
+    // Node
+    py::class_<Node>(m, "Node")
+        .def(py::init<>())
+        .def(py::init<int, double, double, double>())
+        .def_readwrite("id", &Node::id)
+        .def_readwrite("x", &Node::x)
+        .def_readwrite("y", &Node::y)
+        .def_readwrite("z", &Node::z);
+
+    // Material (abstract)
+    py::class_<Material, std::shared_ptr<Material>>(m, "Material");
+
+    // LinearElasticMaterial
+    py::class_<LinearElasticMaterial, Material, std::shared_ptr<LinearElasticMaterial>>(m, "LinearElasticMaterial")
+        .def(py::init<double, double>(), py::arg("E"), py::arg("nu"))
+        .def("get_constitutive_matrix", &LinearElasticMaterial::getConstitutiveMatrix);
+
+    // Element (abstract)
+    py::class_<Element, std::shared_ptr<Element>>(m, "Element")
+        .def("get_node_ids", &Element::getNodeIds)
+        .def("compute_stiffness_matrix", &Element::computeStiffnessMatrix);
+
+    // Tri3Element
+    py::class_<Tri3Element, Element, std::shared_ptr<Tri3Element>>(m, "Tri3Element")
+        .def(py::init<const std::vector<int>&>());
+
+    // Mesh
+    py::class_<Mesh>(m, "Mesh")
+        .def(py::init<>())
+        .def("add_node", &Mesh::addNode)
+        .def("add_element", &Mesh::addElement)
+        .def("num_nodes", &Mesh::numNodes)
+        .def("num_elements", &Mesh::numElements)
+        .def("get_nodes", &Mesh::getNodes, py::return_value_policy::reference_internal)
+        .def("get_elements", &Mesh::getElements, py::return_value_policy::reference_internal);
+}
+
+py example
+----------
+
+import femcore as fem
+
+# 创建网格
+mesh = fem.Mesh()
+
+# 添加节点
+mesh.add_node(fem.Node(0, 0.0, 0.0, 0.0))
+mesh.add_node(fem.Node(1, 1.0, 0.0, 0.0))
+mesh.add_node(fem.Node(2, 0.0, 1.0, 0.0))
+
+# 添加三角形单元（节点索引0,1,2）
+tri = fem.Tri3Element([0, 1, 2])
+mesh.add_element(tri)
+
+# 创建材料
+material = fem.LinearElasticMaterial(210e9, 0.3)
+
+# 获取单元刚度矩阵（示例）
+elem = mesh.get_elements()[0]
+Ke = elem.compute_stiffness_matrix(material)
+print("单元刚度矩阵：\n", Ke)
