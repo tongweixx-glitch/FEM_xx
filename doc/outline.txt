@@ -7,4 +7,3 @@ C++ 核心层：
 
 Python 接口层：
 通过 pybind11 将 C++ 核心类暴露给 Python。
-Python 端负责读取输入文件（JSON、YAML）、构建模型实例、调用求解器、后处理（使用 NumPy、Matplotlib、PyVista 等）
